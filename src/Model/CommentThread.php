@@ -7,5 +7,5 @@ class CommentThread
 {
     public $topLevelComment;
     public $replies;
-    public $isNew;
+    public $isNew = false;
 }

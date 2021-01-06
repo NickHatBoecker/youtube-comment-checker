@@ -17,7 +17,7 @@ class DefaultController extends AbstractController
      */
     public function index(Request $request)
     {
-        $videoIds = $request->request->get('videoIds', []);
+        $videoIds = $request->query->get('videoIds', []);
         $videos = $this->getVideos($videoIds);
 
         return new JsonResponse($videos);
