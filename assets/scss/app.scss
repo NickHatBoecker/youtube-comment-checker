@@ -1,0 +1,24 @@
+@import '../../node_modules/bootstrap/scss/bootstrap';
+@import '../../node_modules/bootstrap-vue/src/index';
+
+body {
+    background-color: lightgray;
+    padding-top: 48px;
+}
+
+/* COMPONENTS */
+.video-row {
+    padding-bottom: 24px;
+    border-bottom: 1px solid #999;
+}
+
+.video-row:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+/* OVERWRITES */
+
+* {
+    border-radius: 0 !important;
+}

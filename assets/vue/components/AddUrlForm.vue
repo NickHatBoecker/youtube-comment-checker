@@ -1,7 +1,7 @@
 <template>
     <form @submit.prevent="onSubmit">
-        <input type="text" v-model="url" />
-        <button type="submit">Add</button>
+        <b-form-input type="text" v-model="url" placeholder="Youtube URL (e.g. https://www.youtube.com/watch?v=XIwyh-QJuRc)" />
+        <b-button variant="primary" block type="submit">ADD VIDEO</b-button>
     </form>
 </template>
 
@@ -13,15 +13,11 @@ export default {
 
     methods: {
         onSubmit () {
-            const videoId = this.getIdFromUrl()
-
-            // @TODO save in store
-
-            this.$emit('add', videoId)
+            this.$emit('add', this.getIdFromUrl())
         },
 
         getIdFromUrl () {
-            const regexp = /[?:\?|&]v=(.*)&/
+            const regexp = /(?:\?|&)v=(.*?)(?:&|$)/
             const result = this.url.match(regexp)
 
             return result[1]

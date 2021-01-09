@@ -1,12 +1,27 @@
 <template>
     <div>
-        <h1>VIDEO DETAIL: {{ videoId }}</h1>
+        <router-link class="d-block mb-3" :to="{ name: 'videosOverview' }">
+            <b-icon icon="arrow-left"></b-icon>
+            Back to Videos
+        </router-link>
 
-        <router-link :to="{ name: 'videosOverview' }">Back to videos</router-link>
+        <template v-if="currentVideo">
+            <h1 class="mb-1">{{ currentVideo.title }}</h1>
+            <p>{{ currentVideo.owner }}</p>
+        </template>
+        <h1 v-else>VIDEO DETAIL: {{ videoId }}</h1>
 
-        <app-video v-if="currentVideo" v-bind="currentVideo" :playable="true" />
+        <iframe
+            v-if="currentVideo"
+            width="560"
+            height="315"
+            :src="`https://www.youtube-nocookie.com/embed/${currentVideo.id}`"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+        />
 
-        <h2>{{ currentVideo.numComments }} Comment(s)</h2>
+        <h2 class="h5 mt-2 mb-5" v-if="currentVideo">{{ currentVideo.numComments }} Comment(s)</h2>
 
         <div v-for="(commentThread, threadIndex) in commentThreads" :key="`commentThread-${threadIndex}`">
             <span v-if="commentThread.isNew">NEW</span>
@@ -27,12 +42,8 @@
 </template>
 
 <script>
-import AppVideo from '../components/Video'
-
 export default {
     name: 'VideoDetail',
-
-    components: { AppVideo },
 
     props: {
         videoId: { type: String, required: true },

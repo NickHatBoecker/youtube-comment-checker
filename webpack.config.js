@@ -1,4 +1,5 @@
-var Encore = require('@symfony/webpack-encore');
+const Encore = require('@symfony/webpack-encore');
+const path = require('path');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -22,7 +23,11 @@ Encore
      * Each entry will result in one JavaScript file (e.g. app.js)
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
-    .addEntry('app', './assets/vue/main.js')
+    .addEntry('app', ['./assets/vue/main.js', './assets/scss/app.scss'])
+
+    .addAliases({
+        '~': path.resolve(__dirname, './assets/vue'),
+    })
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
@@ -55,7 +60,9 @@ Encore
     })
 
     // enables Sass/SCSS support
-    //.enableSassLoader()
+    .enableSassLoader(function (options) {
+        options.sassOptions.includePaths = [ path.resolve(__dirname, 'assets/css') ]
+    })
 
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()
