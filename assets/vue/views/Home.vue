@@ -2,22 +2,23 @@
     <div>
         <h1>Videos</h1>
         <add-url-form @add="addVideoId" />
-        <div v-for="(video, index) in videos" :key="index" @click="openDetails">
-            <img :src="video.thumbnail.url" :width="video.thumbnail.width" alt="" title="" />
-            <h2>{{ video.title }}</h2>
-            <p>{{ video.owner }}</p>
-            <p>{{ video.hasNewComments ? 'New comments available' : 'No new comments' }}</p>
-        </div>
+        <app-video
+            v-for="(video, index) in videos"
+            :key="index"
+            v-bind="video"
+            @open="openDetails(video)"
+        />
     </div>
 </template>
 
 <script>
 import AddUrlForm from '../components/AddUrlForm'
+import AppVideo from '../components/Video'
 
 export default {
     name: 'Home',
 
-    components: { AddUrlForm },
+    components: { AddUrlForm, AppVideo },
 
     data () {
         return {
@@ -44,9 +45,9 @@ export default {
             this.getVideos()
         },
 
-        openDetails () {
-            // @TODO store video data in store
-            this.$router.push({ name: 'videoDetail', params: { videoId: videoId } })
+        openDetails (video) {
+            this.$store.commit('setCurrentVideo', video)
+            this.$router.push({ name: 'videoDetail', params: { videoId: video.id } })
         },
     },
 }

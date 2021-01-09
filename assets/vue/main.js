@@ -3,6 +3,7 @@ import App from './App';
 import router from './router'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import store from './store'
 
 import '../css/app.css';
 
@@ -12,4 +13,5 @@ new Vue({
     el: '#app',
     render: h => h(App),
     router,
+    store,
 });

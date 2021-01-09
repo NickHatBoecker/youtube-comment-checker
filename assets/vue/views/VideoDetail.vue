@@ -4,6 +4,10 @@
 
         <router-link :to="{ name: 'videosOverview' }">Back to videos</router-link>
 
+        <app-video v-if="currentVideo" v-bind="currentVideo" :playable="true" />
+
+        <h2>{{ currentVideo.numComments }} Comment(s)</h2>
+
         <div v-for="(commentThread, threadIndex) in commentThreads" :key="`commentThread-${threadIndex}`">
             <span v-if="commentThread.isNew">NEW</span>
             <img :src="commentThread.topLevelComment.thumbnail" alt="" title="" />
@@ -23,8 +27,16 @@
 </template>
 
 <script>
+import AppVideo from '../components/Video'
+
 export default {
     name: 'VideoDetail',
+
+    components: { AppVideo },
+
+    props: {
+        videoId: { type: String, required: true },
+    },
 
     data () {
         return {
@@ -32,11 +44,18 @@ export default {
         }
     },
 
-    props: {
-        videoId: { type: String, required: true },
+    computed: {
+        currentVideo () {
+            return this.$store.getters.currentVideo
+        },
     },
 
     mounted () {
+        if (!this.currentVideo) {
+            this.$router.push({ name: 'videosOverview' })
+            return
+        }
+
         this.getComments()
     },
 
