@@ -9,7 +9,7 @@ export default new VueRouter({
     mode: 'history',
     routes: [
         { name: 'videosOverview', path: "/videos", component: Home },
-        { name: 'videoDetail', path: "/:videoId", component: VideoDetail, props: true },
+        { name: 'videoDetail', path: "/video-details", component: VideoDetail },
         { path: "*", redirect: "/videos" },
     ]
 });

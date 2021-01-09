@@ -22,14 +22,14 @@
             </b-col>
             <b-col>
                 <h2><b-link @click="openDetails(video)">{{ video.title }}</b-link></h2>
-                <p class="h4 mt-3">{{ video.hasNewComments ? 'New comments available' : 'No new comments' }}</p>
+                <p class="h4 mt-3">{{ video.numNewComments > 0 ? `${video.numNewComments} new comment(s) available` : 'No new comments' }}</p>
             </b-col>
         </b-row>
     </div>
 </template>
 
 <script>
-import { clone, isNil } from 'ramda'
+import { clone } from 'ramda'
 import AddUrlForm from '../components/AddUrlForm'
 
 export default {
@@ -37,39 +37,43 @@ export default {
 
     components: { AddUrlForm },
 
+    data: () => ({ videos: [] }),
+
     computed: {
-        videos () {
-            return this.$store.getters.videos
+        videoIds () {
+            return this.$store.getters.videoIds
+        },
+
+        lastCheck () {
+            return this.$store.getters.lastCheck
         },
     },
 
     mounted () {
+        this.getVideos()
     },
 
     methods: {
-        async getVideo (videoId) {
-            const { data } = await this.$http.get('/api/get-videos/', { params: { videoIds: [ videoId ] } })
+        async getVideos () {
+            const { data } = await this.$http.get('/api/get-videos/', { params: { videoIds: this.videoIds, lastCheck: this.lastCheck } })
 
-            return isNil(data[0]) ? null : data[0]
+            this.videos = data
+
+            return this.videos
         },
 
         async addVideoId (videoId) {
-            if (this.videos.find(x => x.id === videoId)) {
+            if (this.videoIds.find(x => x === videoId)) {
                 alert('You already added this video')
                 return
             }
 
             try {
-                const video = await this.getVideo(videoId)
-                if (!video) {
-                    alert(`Could not find video with id "${ videoId }"`)
-                    return
-                }
+                const videoIds = clone(this.videoIds)
+                videoIds.push(videoId)
 
-                const videos = clone(this.videos)
-                videos.push(video)
-
-                this.$store.dispatch('saveVideos', videos)
+                this.$store.dispatch('saveVideoIds', videoIds)
+                this.getVideos()
             } catch (e) {
                 alert(e.message)
             }
@@ -77,7 +81,7 @@ export default {
 
         openDetails (video) {
             this.$store.commit('setCurrentVideo', video)
-            this.$router.push({ name: 'videoDetail', params: { videoId: video.id } })
+            this.$router.push({ name: 'videoDetail' })
         },
     },
 }

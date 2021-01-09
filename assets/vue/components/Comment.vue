@@ -22,7 +22,7 @@ export default {
         thumbnail: { type: String, required: true },
         owner: { type: String, required: true },
         text: { type: String, required: true },
-        published: { type: Object, required: true },
+        published: { type: Number, required: true },
     },
 }
 </script>

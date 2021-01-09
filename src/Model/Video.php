@@ -9,5 +9,17 @@ class Video
     public $title;
     public $owner;
     public $numComments;
-    public $hasNewComments = false;
+    public $numNewComments = 0;
+    public $threads = [];
+
+    public function calculateNewComments() {
+        $count = 0;
+
+        foreach ($this->threads as $thread) {
+            /** @var CommentThread $thread */
+            $count += $thread->newCommentsCount;
+        }
+
+        $this->numNewComments = $count;
+    }
 }

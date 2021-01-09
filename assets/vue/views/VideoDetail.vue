@@ -5,11 +5,8 @@
             Back to Videos
         </router-link>
 
-        <template v-if="currentVideo">
-            <h1 class="mb-1">{{ currentVideo.title }}</h1>
-            <p>{{ currentVideo.owner }}</p>
-        </template>
-        <h1 v-else>VIDEO DETAIL: {{ videoId }}</h1>
+        <h1 class="mb-1">{{ currentVideo.title }}</h1>
+        <p>{{ currentVideo.owner }}</p>
 
         <iframe
             v-if="currentVideo"
@@ -24,7 +21,7 @@
         <h2 class="h5 mt-2 mb-5" v-if="currentVideo">{{ currentVideo.numComments }} Comment(s)</h2>
 
         <comment-thread
-            v-for="(commentThread, threadIndex) in commentThreads"
+            v-for="(commentThread, threadIndex) in currentVideo.threads"
             :key="`commentThread-${threadIndex}`"
             v-bind="commentThread"
         />
@@ -39,16 +36,6 @@ export default {
 
     components: { CommentThread },
 
-    props: {
-        videoId: { type: String, required: true },
-    },
-
-    data () {
-        return {
-            commentThreads: [],
-        }
-    },
-
     computed: {
         currentVideo () {
             return this.$store.getters.currentVideo
@@ -61,18 +48,7 @@ export default {
             return
         }
 
-        this.getComments()
-    },
-
-    methods: {
-        async getComments () {
-            const { data } = await this.$http.get(`/api/get-comments/${this.videoId}/`)
-
-            this.commentThreads = data
-        },
+        this.$store.commit('setLastCheck', Date.now())
     },
 }
 </script>
-
-<style lang="scss" scoped>
-</style>

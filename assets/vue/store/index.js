@@ -3,17 +3,22 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-const STORE_VIDEOS = 'nhb_youtube_comments_videos'
+const STORE_VIDEO_IDS = 'nhb_youtube_comments_videos'
 
 const Store = new Vuex.Store({
     state: {
-        videos: [],
+        lastCheck: null,
+        videoIds: [],
         currentVideo: null,
     },
 
     mutations: {
-        setVideos (state, payload) {
-            state.videos = payload
+        setLastCheck (state, payload) {
+            state.lastCheck = payload
+        },
+
+        setVideoIds (state, payload) {
+            state.videoIds = payload
         },
 
         setCurrentVideo (state, payload) {
@@ -23,21 +28,22 @@ const Store = new Vuex.Store({
 
     actions: {
         initialiseStore ({ dispatch }) {
-            dispatch('loadVideos')
+            dispatch('loadVideoIds')
         },
 
-        saveVideos ({ commit }, payload) {
-            localStorage.setItem(STORE_VIDEOS, JSON.stringify(payload))
-            commit('setVideos', payload)
+        saveVideoIds ({ commit }, payload) {
+            localStorage.setItem(STORE_VIDEO_IDS, JSON.stringify(payload))
+            commit('setVideoIds', payload)
         },
 
-        loadVideos ({ commit }) {
-            commit('setVideos',  JSON.parse(localStorage.getItem(STORE_VIDEOS)) || [])
+        loadVideoIds ({ commit }) {
+            commit('setVideoIds',  JSON.parse(localStorage.getItem(STORE_VIDEO_IDS)) || [])
         },
     },
 
     getters: {
-        videos: s => s.videos,
+        lastCheck: s => s.lastCheck,
+        videoIds: s => s.videoIds,
         currentVideo: s => s.currentVideo,
     },
 })
