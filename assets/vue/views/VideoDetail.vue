@@ -23,27 +23,21 @@
 
         <h2 class="h5 mt-2 mb-5" v-if="currentVideo">{{ currentVideo.numComments }} Comment(s)</h2>
 
-        <div v-for="(commentThread, threadIndex) in commentThreads" :key="`commentThread-${threadIndex}`">
-            <span v-if="commentThread.isNew">NEW</span>
-            <img :src="commentThread.topLevelComment.thumbnail" alt="" title="" />
-            <p>{{ commentThread.topLevelComment.owner }}</p>
-            <p>{{ commentThread.topLevelComment.text }}</p>
-
-            <template v-if="commentThread.replies">
-                <div v-for="(reply, replyIndex) in commentThread.replies" :key="`commentThread-${threadIndex}-reply-${replyIndex}`">
-                    <span v-if="reply.isNew">NEW</span>
-                    <img :src="reply.thumbnail" alt="" title="" />
-                    <p>{{ reply.owner }}</p>
-                    <p>{{ reply.text }}</p>
-                </div>
-            </template>
-        </div>
+        <comment-thread
+            v-for="(commentThread, threadIndex) in commentThreads"
+            :key="`commentThread-${threadIndex}`"
+            v-bind="commentThread"
+        />
     </div>
 </template>
 
 <script>
+import CommentThread from '~/components/CommentThread'
+
 export default {
     name: 'VideoDetail',
+
+    components: { CommentThread },
 
     props: {
         videoId: { type: String, required: true },
