@@ -5,7 +5,7 @@
         <template v-if="replies">
             <app-comment
                 v-for="(reply, replyIndex) in replies"
-                :key="`commentThread-${threadIndex}-reply-${replyIndex}`"
+                :key="`reply-${replyIndex}`"
                 v-bind="reply"
             />
         </template>

@@ -28,11 +28,10 @@ class DefaultController extends AbstractController
         $client->setDeveloperKey($accessToken);
         $this->youtube = new \Google_Service_YouTube($client);
 
-        $this->lastCheck = $request->query->get('lastCheck', (new \DateTime())->getTimestamp());
-        // Convert JS Date
-        $this->lastCheck = (int) round($this->lastCheck / 1000, 0);
-
         $videoIds = $request->query->get('videoIds', []);
+        if ($videoIds) {
+            $videoIds = json_decode($videoIds, true);
+        }
         $videos = $this->getVideos($videoIds);
 
         return new JsonResponse($videos);
@@ -49,21 +48,28 @@ class DefaultController extends AbstractController
             return [];
         }
 
-        $data = $this->youtube->videos->listVideos('snippet,statistics', ['id' => $videoIds])->items;
+        $onlyVideoIds = array_map(function ($data) {
+            return $data['id'];
+        }, $videoIds);
+
+        $data = $this->youtube->videos->listVideos('snippet,statistics', ['id' => $onlyVideoIds])->items;
 
         $videos = [];
 
         /** @var \Google_Service_YouTube_Video $videoData */
         foreach ($data as $videoData) {
             $snippet = $videoData->getSnippet();
+            $videoId = $videoData->getId();
+
+            $this->lastCheck = $this->getLastCheckByVideoId($videoId, $videoIds);
 
             $video = new Video();
             $video->thumbnail = $snippet->getThumbnails()->getDefault();
             $video->owner = $snippet->getChannelTitle();
             $video->title = $snippet->getTitle();
-            $video->id = $videoData->getId();
+            $video->id = $videoId;
             $video->numComments = (int) $videoData->getStatistics()->getCommentCount();
-            $video->threads = $this->getComments($videoData->getId());
+            $video->threads = $this->getComments($videoId);
 
             $video->calculateNewComments();
 
@@ -139,5 +145,28 @@ class DefaultController extends AbstractController
         }
 
         return $threads;
+    }
+
+    private function convertJSDate($date)
+    {
+        return (int) round($date / 1000, 0);
+    }
+
+    /**
+     * @param string $videoId
+     * @param array $videoIds
+     *
+     * @return int|null
+     */
+    private function getLastCheckByVideoId($videoId, $videoIds)
+    {
+        foreach ($videoIds as $video) {
+            $id = $video['id'] ??  null;
+            if ($id === $videoId) {
+                return isset($video['lastCheck']) ? $this->convertJSDate($video['lastCheck']) : null;
+            }
+        }
+
+        return null;
     }
 }

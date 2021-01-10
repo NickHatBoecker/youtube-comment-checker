@@ -13,6 +13,11 @@ export default {
 
     methods: {
         onSubmit () {
+            if (!this.url) {
+                alert('Please enter a valid url')
+                return
+            }
+
             this.$emit('add', this.getIdFromUrl())
         },
 

@@ -4,19 +4,15 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 const STORE_VIDEO_IDS = 'nhb_youtube_comments_videos'
+const STORE_LAST_CHECK = 'nhb_youtube_comments_lastcheck'
 
 const Store = new Vuex.Store({
     state: {
-        lastCheck: null,
-        videoIds: [],
+        videoIds: [],  // [ { id: 'xxx', lastCheck: 12345|null } ]
         currentVideo: null,
     },
 
     mutations: {
-        setLastCheck (state, payload) {
-            state.lastCheck = payload
-        },
-
         setVideoIds (state, payload) {
             state.videoIds = payload
         },
@@ -42,7 +38,6 @@ const Store = new Vuex.Store({
     },
 
     getters: {
-        lastCheck: s => s.lastCheck,
         videoIds: s => s.videoIds,
         currentVideo: s => s.currentVideo,
     },

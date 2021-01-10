@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="currentVideo">
         <router-link class="d-block mb-3" :to="{ name: 'videosOverview' }">
             <b-icon icon="arrow-left"></b-icon>
             Back to Videos
@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import { clone } from 'ramda'
 import CommentThread from '~/components/CommentThread'
 
 export default {
@@ -40,15 +41,22 @@ export default {
         currentVideo () {
             return this.$store.getters.currentVideo
         },
+
+        videoIds () {
+            return this.$store.getters.videoIds
+        },
     },
 
     mounted () {
         if (!this.currentVideo) {
             this.$router.push({ name: 'videosOverview' })
-            return
         }
 
-        this.$store.commit('setLastCheck', Date.now())
+        const videoIds = clone(this.videoIds)
+        const index = videoIds.findIndex(x => x.id === this.$store.getters.currentVideo.id)
+        videoIds[index].lastCheck = Date.now()
+
+        this.$store.dispatch('saveVideoIds', videoIds)
     },
 }
 </script>

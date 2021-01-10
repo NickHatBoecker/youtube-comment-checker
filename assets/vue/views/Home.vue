@@ -55,7 +55,7 @@ export default {
 
     methods: {
         async getVideos () {
-            const { data } = await this.$http.get('/api/get-videos/', { params: { videoIds: this.videoIds, lastCheck: this.lastCheck } })
+            const { data } = await this.$http.get('/api/get-videos/', { params: { videoIds: JSON.stringify(this.videoIds) } })
 
             this.videos = data
 
@@ -70,7 +70,7 @@ export default {
 
             try {
                 const videoIds = clone(this.videoIds)
-                videoIds.push(videoId)
+                videoIds.push({ id: videoId, lastCheck: Date.now() })
 
                 this.$store.dispatch('saveVideoIds', videoIds)
                 this.getVideos()
