@@ -6,6 +6,8 @@
 </template>
 
 <script>
+import { isNil } from 'ramda'
+
 export default {
     name: 'AddUrlForm',
 
@@ -18,12 +20,20 @@ export default {
                 return
             }
 
+            const videoId = this.getIdFromUrl()
+            if (!videoId) return
+
             this.$emit('add', this.getIdFromUrl())
         },
 
         getIdFromUrl () {
             const regexp = /(?:\?|&)v=(.*?)(?:&|$)/
             const result = this.url.match(regexp)
+
+            if (isNil(result)) {
+                alert('Could not find video id. Please try another one.')
+                return
+            }
 
             return result[1]
         },

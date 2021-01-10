@@ -6,7 +6,7 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
     <title>{% block title %}Welcome!{% endblock %}</title>
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('/images/favicon.png') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ publicPath ~ 'images/favicon.png' }}">
 
     {{ encore_entry_link_tags('app') }}
 </head>
