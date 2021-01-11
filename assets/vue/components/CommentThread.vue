@@ -2,13 +2,13 @@
     <div>
         <app-comment v-bind="topLevelComment" />
 
-        <template v-if="replies">
+        <div v-if="replies" class="ml-5">
             <app-comment
                 v-for="(reply, replyIndex) in replies"
                 :key="`reply-${replyIndex}`"
                 v-bind="reply"
             />
-        </template>
+        </div>
     </div>
 </template>
 
@@ -27,6 +27,3 @@ export default {
     },
 }
 </script>
-
-<style lang="scss" scoped>
-</style>
