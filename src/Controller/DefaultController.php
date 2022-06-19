@@ -19,8 +19,11 @@ class DefaultController extends AbstractController
      * @Route("/api/get-videos/")
      *
      * @param Request $request
+     *
+     * @return JsonResponse
+     * @throws \Exception
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         $accessToken = $this->getParameter('youtubeAccessToken');
 
@@ -41,8 +44,9 @@ class DefaultController extends AbstractController
      * @param array $videoIds
      *
      * @return array
+     * @throws \Exception
      */
-    private function getVideos(array $videoIds)
+    private function getVideos(array $videoIds): array
     {
         if (!$videoIds) {
             return [];
@@ -83,8 +87,9 @@ class DefaultController extends AbstractController
      * @param $videoId
      *
      * @return array
+     * @throws \Exception
      */
-    private function getComments($videoId)
+    private function getComments($videoId): array
     {
         $data = $this->youtube->commentThreads->listCommentThreads('snippet,replies', ['videoId' => $videoId])->items;
 
@@ -147,7 +152,7 @@ class DefaultController extends AbstractController
         return $threads;
     }
 
-    private function convertJSDate($date)
+    private function convertJSDate($date): int
     {
         return (int) round($date / 1000, 0);
     }
@@ -158,7 +163,7 @@ class DefaultController extends AbstractController
      *
      * @return int|null
      */
-    private function getLastCheckByVideoId($videoId, $videoIds)
+    private function getLastCheckByVideoId($videoId, $videoIds): ?int
     {
         foreach ($videoIds as $video) {
             $id = $video['id'] ??  null;

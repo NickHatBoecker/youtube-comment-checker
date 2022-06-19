@@ -4,7 +4,6 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 const STORE_VIDEO_IDS = 'nhb_youtube_comments_videos'
-const STORE_LAST_CHECK = 'nhb_youtube_comments_lastcheck'
 
 const Store = new Vuex.Store({
     state: {

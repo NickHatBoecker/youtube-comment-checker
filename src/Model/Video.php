@@ -12,7 +12,8 @@ class Video
     public $numNewComments = 0;
     public $threads = [];
 
-    public function calculateNewComments() {
+    public function calculateNewComments(): void
+    {
         $count = 0;
 
         foreach ($this->threads as $thread) {
