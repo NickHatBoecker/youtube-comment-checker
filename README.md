@@ -13,3 +13,8 @@ You will need an access token for the YouTube API.
 ```bash
 yarn dev:all // start symfony server and encore-assets
 ```
+
+## Deployment
+
+1. For the PHP part fetch git repository changes on server
+2. For the vue part build files locally and copy them to {serverPath}/public

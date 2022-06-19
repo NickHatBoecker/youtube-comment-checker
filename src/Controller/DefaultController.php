@@ -80,7 +80,7 @@ class DefaultController extends AbstractController
             $videos[] = $video;
         }
 
-        return $videos;
+        return array_reverse($videos);
     }
 
     /**
