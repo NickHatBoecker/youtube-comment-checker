@@ -41,6 +41,37 @@ class DefaultController extends AbstractController
     }
 
     /**
+     * @Route("/api/get-num-new-comments/")
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function getNumNewComments(Request $request): JsonResponse
+    {
+        $accessToken = $this->getParameter('youtubeAccessToken');
+
+        $client = new \Google_Client();
+        $client->setDeveloperKey($accessToken);
+        $this->youtube = new \Google_Service_YouTube($client);
+
+        $videoIds = $request->query->get('videoIds', []);
+        if ($videoIds) {
+            $videoIds = json_decode($videoIds, true);
+        }
+        $videos = $this->getVideos($videoIds);
+
+        $numComments = 0;
+        foreach ($videos as $video) {
+            /** @var Video $video */
+            $numComments += $video->numNewComments;
+        }
+
+        return new JsonResponse($numComments);
+    }
+
+    /**
      * @param array $videoIds
      *
      * @return array
