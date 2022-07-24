@@ -49,12 +49,14 @@ class DefaultController extends AbstractController
     /**
      * @Route("/api/get-num-new-comments/")
      *
-     * @param Request $request
+     * This route can be used with database settings only.
+     *
+     * @param ManagerRegistry $doctrine
      *
      * @return JsonResponse
      * @throws \Exception
      */
-    public function getNumNewComments(Request $request): JsonResponse
+    public function getNumNewComments(ManagerRegistry $doctrine): JsonResponse
     {
         $accessToken = $this->getParameter('youtubeAccessToken');
 
@@ -62,10 +64,14 @@ class DefaultController extends AbstractController
         $client->setDeveloperKey($accessToken);
         $this->youtube = new \Google_Service_YouTube($client);
 
-        $videoIds = $request->query->get('videoIds', []);
-        if ($videoIds) {
-            $videoIds = json_decode($videoIds, true);
+        $settings = $doctrine->getRepository(Settings::class)->findAll();
+        if (!$settings) {
+            return new JsonResponse(0);
         }
+
+        /** @var Settings $settings */
+        $settings = $settings[0];
+        $videoIds = json_decode($settings->getJsonSettings(), true);
         $videos = $this->getVideos($videoIds);
 
         $numComments = 0;
@@ -156,23 +162,25 @@ class DefaultController extends AbstractController
             if ($commentThreadData->getSnippet()->getTotalReplyCount()) {
                 $replies = [];
 
-                /** @var \Google_Service_YouTube_Comment $replyData */
-                foreach ($commentThreadData->getReplies() as $replyData) {
-                    /** @var \Google_Service_YouTube_CommentSnippet $replySnippet */
-                    $replySnippet = $replyData->getSnippet();
+                if ($commentThreadData->getReplies()) {
+                    /** @var \Google_Service_YouTube_Comment $replyData */
+                    foreach ($commentThreadData->getReplies() as $replyData) {
+                        /** @var \Google_Service_YouTube_CommentSnippet $replySnippet */
+                        $replySnippet = $replyData->getSnippet();
 
-                    $reply = new Comment();
-                    $reply->text = $replySnippet->getTextDisplay();
-                    $reply->published = (new \DateTime($replySnippet->getPublishedAt()))->getTimestamp();
-                    $reply->owner = $replySnippet->getAuthorDisplayName();
-                    $reply->thumbnail = $replySnippet->getAuthorProfileImageUrl();
+                        $reply = new Comment();
+                        $reply->text = $replySnippet->getTextDisplay();
+                        $reply->published = (new \DateTime($replySnippet->getPublishedAt()))->getTimestamp();
+                        $reply->owner = $replySnippet->getAuthorDisplayName();
+                        $reply->thumbnail = $replySnippet->getAuthorProfileImageUrl();
 
-                    if ($this->lastCheck < $reply->published) {
-                        $newCommentsCount += 1;
-                        $reply->isNew = true;
+                        if ($this->lastCheck < $reply->published) {
+                            $newCommentsCount += 1;
+                            $reply->isNew = true;
+                        }
+
+                        $replies[] = $reply;
                     }
-
-                    $replies[] = $reply;
                 }
 
                 $commentThread->replies = $replies;
