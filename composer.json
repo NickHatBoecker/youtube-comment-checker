@@ -7,6 +7,10 @@
         "php": ">=7.2.5",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "doctrine/annotations": "^1.13",
+        "doctrine/doctrine-bundle": "2.6.4",
+        "doctrine/doctrine-migrations-bundle": "^3.0",
+        "doctrine/orm": "2.10",
         "google/apiclient": "^2.8",
         "sensio/framework-extra-bundle": "^5.6",
         "symfony/apache-pack": "^1.0",
@@ -22,7 +26,7 @@
         "ext-json": "*"
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.26"
+        "symfony/maker-bundle": "^1.43"
     },
     "config": {
         "optimize-autoloader": true,

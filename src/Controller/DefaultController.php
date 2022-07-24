@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Settings;
 use App\Model\Comment;
 use App\Model\CommentThread;
 use App\Model\Video;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,19 +25,23 @@ class DefaultController extends AbstractController
      * @return JsonResponse
      * @throws \Exception
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, ManagerRegistry $doctrine): JsonResponse
     {
+        $videos = [];
         $accessToken = $this->getParameter('youtubeAccessToken');
 
         $client = new \Google_Client();
         $client->setDeveloperKey($accessToken);
         $this->youtube = new \Google_Service_YouTube($client);
 
-        $videoIds = $request->query->get('videoIds', []);
-        if ($videoIds) {
-            $videoIds = json_decode($videoIds, true);
+        $jsonVideoIds = $request->query->get('videoIds', []);
+
+        if ($jsonVideoIds) {
+            $videoIds = json_decode($jsonVideoIds, true);
+            $videos = $this->getVideos($videoIds);
+
+            $this->saveVideoIdsToDatabase($jsonVideoIds, $doctrine);
         }
-        $videos = $this->getVideos($videoIds);
 
         return new JsonResponse($videos);
     }
@@ -204,5 +210,27 @@ class DefaultController extends AbstractController
         }
 
         return null;
+    }
+
+    /**
+     * @param string          $jsonVideoIds
+     * @param ManagerRegistry $doctrine
+     *
+     * @return void
+     */
+    private function saveVideoIdsToDatabase(string $jsonVideoIds, ManagerRegistry $doctrine): void
+    {
+        $settings = $doctrine->getRepository(Settings::class)->findAll();
+        if (count($settings)) {
+            $settings = $settings[0];
+        } else {
+            $settings = new Settings();
+        }
+
+        $settings->setJsonSettings($jsonVideoIds);
+
+        $em = $doctrine->getManager();
+        $em->persist($settings);
+        $em->flush();
     }
 }
