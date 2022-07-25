@@ -28,19 +28,24 @@ class DefaultController extends AbstractController
     public function index(Request $request, ManagerRegistry $doctrine): JsonResponse
     {
         $videos = [];
-        $accessToken = $this->getParameter('youtubeAccessToken');
 
-        $client = new \Google_Client();
-        $client->setDeveloperKey($accessToken);
-        $this->youtube = new \Google_Service_YouTube($client);
+        try {
+            $accessToken = $this->getParameter('youtubeAccessToken');
 
-        $jsonVideoIds = $request->query->get('videoIds', []);
+            $client = new \Google_Client();
+            $client->setDeveloperKey($accessToken);
+            $this->youtube = new \Google_Service_YouTube($client);
 
-        if ($jsonVideoIds) {
-            $videoIds = json_decode($jsonVideoIds, true);
-            $videos = $this->getVideos($videoIds);
+            $jsonVideoIds = $request->query->get('videoIds', []);
 
-            $this->saveVideoIdsToDatabase($jsonVideoIds, $doctrine);
+            if ($jsonVideoIds) {
+                $videoIds = json_decode($jsonVideoIds, true);
+                $videos = $this->getVideos($videoIds);
+
+                $this->saveVideoIdsToDatabase($jsonVideoIds, $doctrine);
+            }
+        } catch (\Exception $e) {
+            // Do nothing
         }
 
         return new JsonResponse($videos);
