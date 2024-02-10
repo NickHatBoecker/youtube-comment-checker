@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1 class="mb-4">Videos</h1>
+        <h1 class="mb-4">Videos <small class="sum-new-comments">({{ sumNewComments }} NEU)</small></h1>
         <add-url-form @add="addVideoId" />
 
         <b-row
@@ -47,6 +47,16 @@ export default {
         lastCheck () {
             return this.$store.getters.lastCheck
         },
+
+        sumNewComments () {
+            let sum = 0
+
+            this.videos.forEach((video) => {
+                sum += video.numNewComments
+            })
+
+            return sum
+        },
     },
 
     mounted () {
@@ -86,3 +96,11 @@ export default {
     },
 }
 </script>
+
+<style lang="scss" scoped>
+.sum-new-comments {
+    font-size: 1rem;
+    vertical-align: middle;
+    color: #333;
+}
+</style>
