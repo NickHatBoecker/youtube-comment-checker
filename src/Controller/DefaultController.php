@@ -20,10 +20,10 @@ class DefaultController extends AbstractController
     /**
      * @Route("/api/get-videos/")
      *
-     * @param Request $request
+     * @param Request         $request
+     * @param ManagerRegistry $doctrine
      *
      * @return JsonResponse
-     * @throws \Exception
      */
     public function index(Request $request, ManagerRegistry $doctrine): JsonResponse
     {

@@ -11,6 +11,7 @@
         "axios": "^0.21.1",
         "bootstrap": "^4.5.3",
         "bootstrap-vue": "^2.21.2",
+        "html2pdf.js": "^0.10.1",
         "ramda": "^0.27.1",
         "vue": "^2.6.12",
         "vue-axios": "^3.2.2",

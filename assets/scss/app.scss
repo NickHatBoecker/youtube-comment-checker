@@ -22,6 +22,14 @@ body {
     top: -2px;
 }
 
+.u-flex--space-between {
+    justify-content: space-between;
+}
+
+.u-flex--center-vertically {
+    align-items: center;
+}
+
 /* OVERWRITES */
 
 * {
