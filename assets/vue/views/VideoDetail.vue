@@ -68,11 +68,15 @@ export default {
     },
 
     methods: {
-        exportToPdf () {
+        async exportToPdf () {
             let filename = this.currentVideo.title.replace(' ', '_')
             filename = filename.replace(/[^a-zA-Z0-9_-]/g, '')
 
-            html2pdf(document.getElementById('to-pdf'), {
+            const elementToPrint = document.getElementById('to-pdf')
+
+            elementToPrint.classList.add('pdf-render')
+
+            await html2pdf(elementToPrint, {
                 enableLinks: false,
                 margin: 10,
                 pagebreak: {
@@ -81,6 +85,8 @@ export default {
                 },
                 filename,
             })
+
+            elementToPrint.classList.remove('pdf-render')
         },
     },
 }
